@@ -33,6 +33,8 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
+    from .seed import seed
+    seed()
     if redis_ping():
         log.info("Redis connected at %s", settings.redis_url)
     else:
