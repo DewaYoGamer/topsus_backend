@@ -23,10 +23,19 @@ def _load_dotenv() -> None:
 _load_dotenv()
 
 
+def _normalize_db_url(url: str) -> str:
+    """Accept Railway-style ``mysql://`` and convert to SQLAlchemy ``mysql+pymysql://``."""
+    if url.startswith("mysql://"):
+        return "mysql+pymysql://" + url[len("mysql://") :]
+    return url
+
+
 class Settings:
-    database_url: str = os.getenv(
-        "DATABASE_URL",
-        "mysql+pymysql://root:@127.0.0.1:3306/topsus3",
+    database_url: str = _normalize_db_url(
+        os.getenv(
+            "DATABASE_URL",
+            "mysql+pymysql://root:@127.0.0.1:3306/topsus3",
+        )
     )
     jwt_secret: str = os.getenv("JWT_SECRET", "dev-secret-change-me")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
